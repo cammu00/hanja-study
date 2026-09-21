@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14231d">
+  <meta name="description" content="한자 카드, 퀴즈, 오답 복습을 한곳에서 하는 암기 앱">
+  <title>한결 — 한문 암기</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%2314231d'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='40' fill='%23f3d77c'%3E文%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#study" aria-label="한결 홈">
+      <span class="brand-mark" aria-hidden="true">文</span>
+      <span><strong>한결</strong><small>한문 암기</small></span>
+    </a>
+    <button id="themeBtn" class="icon-btn" type="button" aria-label="화면 테마 바꾸기" title="화면 테마 바꾸기">◐</button>
+  </header>
+
+  <main class="app-shell">
+    <section class="summary" aria-label="오늘의 학습 현황">
+      <div>
+        <p class="eyebrow" id="todayLabel">오늘의 학습</p>
+        <h1>조금씩, 확실하게.</h1>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><strong id="dueCount">0</strong><span>오늘 남음</span></div>
+        <div class="stat"><strong id="streakCount">0</strong><span>연속 학습</span></div>
+        <div class="stat"><strong id="accuracyCount">—</strong><span>정답률</span></div>
+      </div>
+    </section>
+
+    <nav class="tabs" aria-label="주요 메뉴">
+      <button class="tab active" data-view="study" type="button">학습</button>
+      <button class="tab" data-view="quiz" type="button">퀴즈</button>
+      <button class="tab" data-view="review" type="button">오답</button>
+      <button class="tab" data-view="data" type="button">단어 관리</button>
+    </nav>
+
+    <section id="studyView" class="view active" aria-labelledby="studyHeading">
+      <div class="section-head">
+        <div><p class="eyebrow">ACTIVE RECALL</p><h2 id="studyHeading">오늘의 카드</h2></div>
+        <span class="counter" id="studyCounter">0 / 0</span>
+      </div>
+      <article class="flashcard" id="flashcard">
+        <div class="lesson-chip" id="cardLesson">예시</div>
+        <div class="hanja" id="cardHanja">學</div>
+        <p class="prompt">음과 뜻을 떠올려 보세요.</p>
+        <div class="answer" id="cardAnswer" hidden>
+          <strong id="cardReading">학 · 배우다</strong>
+          <span id="cardWord">學校 · 학교</span>
+        </div>
+        <button id="revealBtn" class="primary-btn" type="button">정답 보기</button>
+        <div id="ratingButtons" class="rating-grid" hidden>
+          <button data-rating="again" type="button"><b>다시</b><small>곧 다시</small></button>
+          <button data-rating="hard" type="button"><b>어려움</b><small>1일 뒤</small></button>
+          <button data-rating="good" type="button"><b>보통</b><small>3일 뒤</small></button>
+          <button data-rating="easy" type="button"><b>쉬움</b><small>7일 뒤</small></button>
+        </div>
+      </article>
+      <div id="studyEmpty" class="empty-state" hidden>
+        <span>✓</span><h3>오늘 학습을 마쳤어요</h3><p>퀴즈를 풀거나 단어 관리에서 새 단어를 추가해 보세요.</p>
+      </div>
+    </section>
+
+    <section id="quizView" class="view" aria-labelledby="quizHeading">
+      <div class="section-head">
+        <div><p class="eyebrow">QUICK QUIZ</p><h2 id="quizHeading">뜻 고르기</h2></div>
+        <span class="counter" id="quizScore">0 / 0</span>
+      </div>
+      <article class="quiz-card">
+        <div class="hanja quiz-hanja" id="quizHanja">學</div>
+        <p id="quizPrompt">이 한자의 음과 뜻은?</p>
+        <div id="quizOptions" class="quiz-options"></div>
+        <div id="quizFeedback" class="feedback" aria-live="polite"></div>
+        <button id="nextQuizBtn" class="primary-btn" type="button" hidden>다음 문제</button>
+      </article>
+    </section>
+
+    <section id="reviewView" class="view" aria-labelledby="reviewHeading">
+      <div class="section-head">
+        <div><p class="eyebrow">WEAK POINTS</p><h2 id="reviewHeading">오답 노트</h2></div>
+        <button id="clearWrongBtn" class="text-btn" type="button">목록 비우기</button>
+      </div>
+      <div id="wrongList" class="word-list"></div>
+      <div id="reviewEmpty" class="empty-state" hidden>
+        <span>◎</span><h3>아직 틀린 문제가 없어요</h3><p>퀴즈에서 틀린 한자가 이곳에 자동으로 모입니다.</p>
+      </div>
+    </section>
+
+    <section id="dataView" class="view" aria-labelledby="dataHeading">
+      <div class="section-head">
+        <div><p class="eyebrow">MY WORDS</p><h2 id="dataHeading">단어 관리</h2></div>
+        <span class="counter"><b id="wordCount">0</b>자</span>
+      </div>
+      <div class="data-panel">
+        <div class="upload-box">
+          <div class="upload-icon" aria-hidden="true">＋</div>
+          <h3>내 단어 파일 불러오기</h3>
+          <p>CSV 또는 JSON 파일을 선택하세요. 기존 학습 기록과 단어는 이 기기에 저장됩니다.</p>
+          <label class="primary-btn file-btn">파일 선택<input id="fileInput" type="file" accept=".csv,.json,application/json,text/csv"></label>
+          <div class="import-choice" role="group" aria-label="불러오기 방식">
+            <label><input type="radio" name="importMode" value="replace" checked> 기존 단어 교체</label>
+            <label><input type="radio" name="importMode" value="merge"> 기존 단어와 합치기</label>
+          </div>
+        </div>
+        <div class="format-card">
+          <h3>필수 열</h3>
+          <code>hanja, sound, meaning</code>
+          <p>선택 열: <code>word, wordMeaning, lesson</code></p>
+          <div class="button-row">
+            <a class="secondary-btn" href="data/hanja-template.csv" download>CSV 양식 받기</a>
+            <button id="exportBtn" class="secondary-btn" type="button">백업 내보내기</button>
+          </div>
+        </div>
+      </div>
+      <div class="danger-zone">
+        <div><strong>처음 상태로 되돌리기</strong><p>불러온 단어와 모든 학습 기록을 지웁니다.</p></div>
+        <button id="resetBtn" class="danger-btn" type="button">초기화</button>
+      </div>
+      <p id="dataMessage" class="data-message" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer>학습 데이터는 이 브라우저에만 저장됩니다.</footer>
+  <script src="data/hanja.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
